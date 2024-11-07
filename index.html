@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寻找宝藏游戏</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="clue" class="hidden"></div>
+    <div id="location" class="hidden"></div>
+    <div id="passage" class="hidden"></div>
+    <div id="box" class="hidden"></div>
+    <div id="key" class="hidden"></div>
+    <div id="entrance" class="hidden"></div>
+    <div id="treasure" class="hidden"></div>
+    <div id="death" class="hidden"></div>
+    <div id="missed-item" class="hidden"></div>
+    <div id="missed-treasure" class="hidden"></div>
+    <div id="treasure-image"></div>
+
+    <button id="start-game">开始游戏</button>
+
+    <script type="module" src="TreasureMap.js"></script>
+    <script type="module">
+        import TreasureMap from './TreasureMap.js';
+
+        async function findTreasureWithAsyncAwait() {
+          try {
+            // 游戏开始
+            console.log("游戏开始");
+
+            // 进入古老的图书馆
+            console.log("进入古老的图书馆");
+            alert("进入古老的图书馆");
+
+            // 在古老的图书馆里找到了第一个线索
+            const clue = await TreasureMap.getInitialClue();
+            console.log(`在古老的图书馆里找到了第一个线索: ${clue}`);
+            showElement('clue', clue);
+            alert("在古老的图书馆里找到了第一个线索");
+
+            // 是否解码线索
+            const shouldDecode = await askPlayer("是否要解码线索？(y/n)");
+            if (shouldDecode === 'y') {
+              // 解码成功！宝藏在一座古老的神庙中
+              const location = await TreasureMap.decodeAncientScript(clue);
+              console.log(`解码成功！宝藏在一座古老的神庙中: ${location}`);
+              showElement('location', location);
+              alert("解码成功！宝藏在一座古老的神庙中");
+
+              // 糟糕！迷路了！
+              console.log("糟糕！迷路了！");
+              alert("糟糕！迷路了！");
+
+              // 发现了隐藏的通道
+              const passage = await TreasureMap.findHiddenPassage();
+              console.log(`发现了隐藏的通道: ${passage}`);
+              showElement('passage', passage);
+              alert("发现了隐藏的通道");
+
+              // 成功找到了神庙
+
+              // 找到了一个神秘的箱子
+              const box = await TreasureMap.searchTemple(location);
+              console.log(`找到了一个神秘的箱子: ${box}`);
+              showElement('box', box);
+              alert("找到了一个神秘的箱子");
+
+              // 是否开启宝箱
+              const shouldOpenBox = await askPlayer("是否要开启宝箱？(y/n)");
+              if (shouldOpenBox === 'y') {
+                // 你找到了一个特殊的钥匙
+                const key = await TreasureMap.openTreasureBox();
+                console.log(`你找到了一个特殊的钥匙: ${key}`);
+                showElement('key', key);
+                alert("你找到了一个特殊的钥匙");
+
+                // 成功打开神庙内部的大门
+                console.log("成功打开神庙内部的大门");
+                alert("成功打开神庙内部的大门");
+
+                // 糟糕！遇到了神庙守卫！
+                console.log("糟糕！遇到了神庙守卫！");
+                alert("糟糕！遇到了神庙守卫！");
+
+                // 是否要使用特殊技能
+                const shouldUseSkill = await askPlayer("是否要使用特殊技能？(y/n)");
+                if (shouldUseSkill === 'y') {
+                  // 你击败了守卫
+                  const entrance = await TreasureMap.useSpecialSkill();
+                  console.log(`你击败了守卫!: ${entrance}`);
+                  showElement('entrance', entrance);
+                  alert("你击败了守卫!");
+
+                  // 你找到了宝藏的入口
+                  console.log("你找到了宝藏的入口");
+                  alert("你找到了宝藏的入口");
+
+                  // 恭喜！你找到了传说中的宝藏！
+                  const treasure = await TreasureMap.openTreasureBox();
+                  console.log(`恭喜！你找到了传说中的宝藏!: ${treasure}`);
+                  showElement('treasure', treasure);
+                  alert("恭喜！你找到了传说中的宝藏!");
+
+                 
+                  await TreasureMap.displayTreasureImage();
+
+                  // 游戏结束
+                  console.log("游戏结束");
+                  return; // 结束游戏
+                } else {
+                  // 你棋差一招，你已阵亡。游戏结束
+                  console.log("你棋差一招，你已阵亡。游戏结束");
+                  showElement('death', "你棋差一招，你已阵亡。游戏结束");
+                  alert("你棋差一招，你已阵亡。游戏结束");
+                  return; // 结束游戏
+                }
+              } else {
+                // 你失去了一个重要的物品，与宝藏失之交臂。游戏结束
+                console.log("你失去了一个重要的物品，与宝藏失之交臂。游戏结束");
+                showElement('missed-item', "你失去了一个重要的物品，与宝藏失之交臂。游戏结束");
+                alert("你失去了一个重要的物品，与宝藏失之交臂。游戏结束");
+                return; // 结束游戏
+              }
+            } else {
+              // 选择否，你错过了宝藏，游戏结束
+              console.log("你错过了宝藏，游戏结束");
+              showElement('missed-treasure', "你错过了宝藏，游戏结束");
+              alert("你错过了宝藏，游戏结束");
+              return; // 结束游戏
+            }
+
+          } catch (error) {
+            console.error("任务失败:", error);
+          }
+        }
+
+        // 假设的辅助函数
+        function showElement(elementId, content) {
+          // 这个函数应该更新页面上指定ID的元素内容
+          const element = document.getElementById(elementId);
+          element.innerText = content;
+          element.classList.add('visible');
+        }
+
+        function askPlayer(question) {
+          return new Promise((resolve) => {
+            const answer = prompt(question); // 使用浏览器提示框
+            resolve(answer);
+          });
+        }
+
+        // 调用游戏函数
+        document.getElementById('start-game').addEventListener('click', findTreasureWithAsyncAwait);
+    </script>
+</body>
+</html>
